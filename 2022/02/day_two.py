@@ -55,18 +55,60 @@ def calculate_score(opponent_points, my_points):
     return my_points.value + round_result[opponent_points, my_points].value
 
 
-def matches(match):
+def calculate_score_with_strategy(opponent_move, my_move):
+    rock = Points.Rock.name
+    paper = Points.Paper.name
+    scissors = Points.Scissors.name
+
+    if opponent_move == rock:
+        if my_move == rock:
+            return Score.Lose.value + Points.Scissors.value
+
+        if my_move == paper:
+            return Score.Draw.value + Points.Rock.value
+
+        if my_move == scissors:
+            return Score.Win.value + Points.Paper.value
+
+    if opponent_move == paper:
+        if my_move == rock:
+            return Score.Lose.value + Points.Rock.value
+
+        if my_move == paper:
+            return Score.Draw.value + Points.Paper.value
+
+        if my_move == scissors:
+            return Score.Win.value + Points.Scissors.value
+
+    if opponent_move == scissors:
+        if my_move == rock:
+            return Score.Lose.value + Points.Paper.value
+
+        if my_move == paper:
+            return Score.Draw.value + Points.Scissors.value
+
+        if my_move == scissors:
+            return Score.Win.value + Points.Rock.value
+
+    return 0
+
+
+def matches(match, with_strategy=False):
     opponent, me = match.rstrip("").rstrip(" ").rstrip("\n").split(" ")
 
     opponent_move = next(move['name'] for move in Moves if opponent in move['move'])
     my_move = next(move['name'] for move in Moves if me in move['move'])
 
+    if with_strategy:
+        return calculate_score_with_strategy(opponent_move, my_move)
+
     return calculate_score(Points[opponent_move], Points[my_move])
 
 
-def total_score(file):
-    return sum(matches(match) for match in file)
+def total_score(file, with_strategy=False):
+    return sum(matches(match, with_strategy=with_strategy) for match in file)
 
 
 if __name__ == '__main__':
-    print(total_score(get_input()))
+    print('Part 1:', total_score(get_input()))
+    print('Part 2:', total_score(get_input(), with_strategy=True))
