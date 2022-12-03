@@ -28,6 +28,20 @@ def shared_item(rucksack):
     return in_both_compartments
 
 
+def group_shared_item(group):
+    first = [*group[0]]
+    second = [*group[1]]
+    third = [*group[2]]
+
+    shared_item_in_group = ''
+    for item_first in first:
+        for item_second in second:
+            if item_first == item_second and item_first in third:
+                shared_item_in_group = item_first
+
+    return shared_item_in_group
+
+
 def priority():
     return {
         "lowercase": {
@@ -41,25 +55,62 @@ def priority():
     }
 
 
+def get_rucksack_groups(rucksacks):
+    groups = list(zip(*[iter(rucksacks)]*3))
+
+    return groups
+
+
 def sum_priorities(priorities):
     return sum(priorities)
 
 
-if __name__ == '__main__':
+def get_rucksacks():
     input = get_input()
-    rucksacks = [
+
+    return [
         {
             rucksack.rstrip('\n'): shared_item(split_into_compartments(rucksack.rstrip('\n')))
         }
         for rucksack in input
     ]
 
+
+def part_one():
+    rucksacks = get_rucksacks()
+
     all_priorities = []
     for rucksack in rucksacks:
         for items, priority_item in rucksack.items():
-
             all_priorities.append(
                 priority()['lowercase' if priority_item.islower() else 'uppercase'][priority_item]
             )
 
-    print("Part 1:", sum_priorities(all_priorities))
+    return sum_priorities(all_priorities)
+
+
+def part_two():
+    rucksacks = get_rucksacks()
+
+    all_priorities = []
+    rucksack_list = [
+        items
+        for rucksack in rucksacks
+        for items, _ in rucksack.items()
+    ]
+
+    rucksack_groups = get_rucksack_groups(rucksack_list)
+
+    for group in rucksack_groups:
+        shared_item_in_group = group_shared_item(group)
+        all_priorities.append(
+            priority()['lowercase' if shared_item_in_group.islower() else 'uppercase'][shared_item_in_group]
+        )
+
+    return sum_priorities(all_priorities)
+
+
+if __name__ == '__main__':
+    print("Part 1:", part_one())
+    print("Part 2:", part_two())
+

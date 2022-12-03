@@ -1,6 +1,7 @@
 import unittest
 
-from day_three import split_into_compartments, shared_item, priority, sum_priorities
+from day_three import split_into_compartments, shared_item, priority, sum_priorities, get_rucksack_groups, \
+    group_shared_item
 
 
 class TestDayThree(unittest.TestCase):
@@ -21,7 +22,35 @@ class TestDayThree(unittest.TestCase):
         self.assertEqual(157, total_priority_of_all_rucksacks)
 
     def test_part_two(self):
-        pass
+        groups = get_rucksack_groups([
+            "vJrwpWtwJgWrhcsFMMfFFhFp",
+            "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+            "PmmdzqPrVvPwwTWBwg",
+            "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+            "ttgJtRGJQctTZtZT",
+            "CrZsJsPPZsGzwwsLwLmpwMDw"
+        ])
+        shared_item_in_rucksack = group_shared_item(groups[0])
+
+        priorities = [
+            18, 52
+        ]
+        total_priority_of_item_types = sum_priorities(priorities)
+
+        self.assertEqual([
+            (
+                "vJrwpWtwJgWrhcsFMMfFFhFp",
+                "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+                "PmmdzqPrVvPwwTWBwg"
+            ),
+            (
+                "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+                "ttgJtRGJQctTZtZT",
+                "CrZsJsPPZsGzwwsLwLmpwMDw"
+            )
+        ], groups)
+        self.assertEqual('r', shared_item_in_rucksack)
+        self.assertEqual(70, total_priority_of_item_types)
 
 
 if __name__ == '__main__':
