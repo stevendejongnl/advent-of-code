@@ -3,7 +3,7 @@ import unittest
 from day_four import get_sections, intersection, calculate_double_cleaning, contains, calculate_double_cleaning_total
 
 
-class TestDayThree(unittest.TestCase):
+class TestDayFour(unittest.TestCase):
     def test_part_one(self):
         self.assertEqual([2, 3, 4], get_sections('2-4'))
         self.assertEqual([{7}], intersection(([5, 6, 7], [7, 8, 9])))
