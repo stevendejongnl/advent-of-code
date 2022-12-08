@@ -5,6 +5,7 @@ def get_input(test=False):
 
     return file.read()
 
+
 def part_one(test=False):
     file = get_input(test)
     return file
