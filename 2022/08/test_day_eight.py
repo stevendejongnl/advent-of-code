@@ -1,7 +1,7 @@
 import unittest
 
 
-from day_08 import part_one, part_two
+from day_eight import part_one, part_two
 
 
 class TestDayEight(unittest.TestCase):
