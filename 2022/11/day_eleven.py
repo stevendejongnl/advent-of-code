@@ -20,6 +20,8 @@ def sunday_morning_parsing_routine(lines):
                 monkey_dict = {}
 
             monkey_dict['monkey'] = counter
+            monkey_dict['inspections'] = 0
+            monkey_dict['worry'] = 0
 
         if 'Starting items' in line:
             item_list = [
@@ -50,52 +52,60 @@ def sunday_morning_parsing_routine(lines):
     return monkeys
 
 
-def calculate_worried_levels(monkeys, throws=20):
+def throw_items(monkeys, monkey, no_divider):
+    # sys.set_int_max_str_digits(1_000_000_000)
     bored_divider = 3
-    print(throws)
-    inspection = [0 for _ in monkeys]
-    for _ in range(throws):
-        print("Throws", _)
-        for index, monkey in enumerate(monkeys):
-            for item in monkey['items'].copy():
-                inspection[index] += 1
+    for item in monkey['items'].copy():
+        operation = monkey['operation'].replace('old', str(item))
+        worried_level = eval(str(item) + operation)
 
-                sum_string = str(item) + monkey['operation'].replace('old', str(item))
-                outcome = 0
+        if no_divider:
+            worried_level %= monkey['worry']
+        else:
+            worried_level //= bored_divider
 
-                if '*' in sum_string:
-                    a, b = sum_string.split('*')
-                    outcome = int(int(a) * int(b))
-                if '+' in sum_string:
-                    a, b = sum_string.split('+')
-                    outcome = int(int(a) + int(b))
+        divisible = worried_level % monkey['divide'] == 0
+        if divisible:
+            # print(f"Thrown to monkey {monkey['test_true']} with worried level {worried_level}")
+            monkeys[monkey['test_true']]['items'].append(worried_level)
+        else:
+            # print(f"Thrown to monkey {monkey['test_false']} with worried level {worried_level}")
+            monkeys[monkey['test_false']]['items'].append(worried_level)
 
-                worried_level = int(outcome / bored_divider)
-
-                divisible = worried_level / monkey['divide'] == 0
-                monkey['items'].pop(monkey['items'].index(item))
-
-                if divisible:
-                    # print(f"Thrown to monkey {monkey['test_true']} with worried level {worried_level}")
-                    monkeys[monkey['test_true']]['items'].append(worried_level)
-                else:
-                    # print(f"Thrown to monkey {monkey['test_false']} with worried level {worried_level}")
-                    monkeys[monkey['test_false']]['items'].append(worried_level)
-
-        for monkey in monkeys:
-            print(f"Monkey {monkey['monkey']}: {monkey['items']}")
-        print(" ")
+        monkey['items'].pop(monkey['items'].index(item))
+        monkey['inspections'] += 1
 
     return monkeys
+
+
+def calculate_worried_levels(monkeys, throws=20):
+    no_divider = True if throws > 20 else False
+
+    worry = 1
+    for monkey in monkeys:
+        worry *= monkey['divide']
+    for monkey in monkeys:
+        monkey['worry'] = worry
+
+    for _ in range(throws):
+        for monkey in monkeys:
+            monkeys = throw_items(monkeys, monkey, no_divider)
+
+    active_inspections = [monkey['inspections'] for monkey in monkeys]
+    active_inspections.sort(reverse=True)
+
+    return active_inspections[0] * active_inspections[1]
 
 
 def part_one(test=False):
     file = get_input(test)
     monkeys = sunday_morning_parsing_routine(file)
-    calculate_worried_levels(monkeys)
-    return 0
+    total = calculate_worried_levels(monkeys)
+    return total
 
 
 def part_two(test=False):
     file = get_input(test)
-    return file
+    monkeys = sunday_morning_parsing_routine(file)
+    total = calculate_worried_levels(monkeys, throws=10_000)
+    return total

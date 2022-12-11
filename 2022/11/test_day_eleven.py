@@ -1,5 +1,6 @@
 import unittest
-from day_eleven import part_one, sunday_morning_parsing_routine, get_input, calculate_worried_levels
+
+from day_eleven import part_one, sunday_morning_parsing_routine, get_input, part_two
 
 
 class TestDayEleven(unittest.TestCase):
@@ -13,6 +14,8 @@ class TestDayEleven(unittest.TestCase):
                 'divide': 23,
                 'test_true': 2,
                 'test_false': 3,
+                'inspections': 0,
+                'worry': 0,
             }, {
                 'monkey': 1,
                 'items': [54, 65, 75, 74],
@@ -20,6 +23,8 @@ class TestDayEleven(unittest.TestCase):
                 'divide': 19,
                 'test_true': 2,
                 'test_false': 0,
+                'inspections': 0,
+                'worry': 0,
             }, {
                 'monkey': 2,
                 'items': [79, 60, 97],
@@ -27,6 +32,8 @@ class TestDayEleven(unittest.TestCase):
                 'divide': 13,
                 'test_true': 1,
                 'test_false': 3,
+                'inspections': 0,
+                'worry': 0,
             }, {
                 'monkey': 3,
                 'items': [74],
@@ -34,33 +41,22 @@ class TestDayEleven(unittest.TestCase):
                 'divide': 17,
                 'test_true': 0,
                 'test_false': 1,
+                'inspections': 0,
+                'worry': 0,
             }
         ]
 
         self.assertEqual(monkeys, sunday_morning_parsing_routine(file))
-
-        # monkeys_after_throw = calculate_worried_levels(monkeys, 1)
-        # self.assertEqual([
-        #     [20, 23, 27, 26],
-        #     [25, 167, 207, 694, 401, 1046]
-        # ], [monkeys_after_throw[0]['items'], monkeys_after_throw[1]['items']])
-
-        monkeys_after_throw = calculate_worried_levels(monkeys, 20)
-        self.assertEqual([
-            [695, 10, 71, 135, 350],
-            [43, 49, 58, 55, 362]
-        ], [monkeys_after_throw[0]['items'], monkeys_after_throw[1]['items']])
-
         self.assertEqual(10605, part_one(test=True))
 
     def test_part_one(self):
-        pass
+        self.assertEqual(111210, part_one())
 
     def test_part_two_example(self):
-        pass
+        self.assertEqual(2713310158, part_two(test=True))
 
     def test_part_two(self):
-        pass
+        self.assertEqual(15447387620, part_two())
 
 
 if __name__ == '__main__':
