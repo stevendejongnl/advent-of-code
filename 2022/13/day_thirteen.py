@@ -1,3 +1,6 @@
+from functools import cmp_to_key
+
+
 def get_input(test=False):
     input_file = f"input{'_test' if test else ''}.txt"
 
@@ -52,6 +55,7 @@ def split_into_pairs(packets: list[str]) -> list[list]:
 def move_when_list(left: list | int, right: list | int):
     if isinstance(left, int):
         left = [left]
+
     if isinstance(right, int):
         right = [right]
 
@@ -61,11 +65,13 @@ def move_when_list(left: list | int, right: list | int):
 def compare_small_with_big_list(small: list, big: list) -> int:
     for left, right in zip(small, big):
         if isinstance(left, int) and isinstance(right, int):
+            if not left < right and not left > right:
+                continue
+
             if left < right:
                 return -1
-            elif left > right:
-                return 1
-            continue
+
+            return 1
 
         if isinstance(left, list) or isinstance(right, list):
             inner_list = move_when_list(left, right)
@@ -75,12 +81,28 @@ def compare_small_with_big_list(small: list, big: list) -> int:
 
             return inner_list
 
+    if not len(small) < len(big) and not len(small) > len(big):
+        return 0
+
     if len(small) < len(big):
         return -1
-    elif len(small) > len(big):
-        return 1
-    else:
-        return 0
+
+    return 1
+
+
+def find_divider_packets(pairs: list, divider_packet: list) -> int:
+    left = 0
+    right = len(pairs) - 1
+
+    while left < right:
+        middle = left + (right - left) // 2
+
+        if compare_small_with_big_list(pairs[middle], divider_packet) == -1:
+            left = middle + 1
+            continue
+
+        right = middle
+    return right + 1
 
 
 def total_indices_of_pairs(pairs: list[list]) -> int:
@@ -105,5 +127,16 @@ def part_one(test=False) -> int:
     return result
 
 
-def part_two(test=False):
-    pass
+def part_two(test=False) -> int:
+    packets = get_input(test)
+
+    pairs = split_into_pairs(packets)
+    pairs.sort(key=cmp_to_key(compare_small_with_big_list))
+
+    first_divider_packet = [[2]]
+    second_divider_packet = [[6]]
+
+    first_packet = find_divider_packets(pairs, first_divider_packet)
+    second_packet = find_divider_packets(pairs, second_divider_packet) + 1
+
+    return first_packet * second_packet
